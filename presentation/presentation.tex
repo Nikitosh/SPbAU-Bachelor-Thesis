@@ -116,7 +116,7 @@
     	\begin{itemize}
 			\item Узкоспециализированная
 			\item Большая база вопросов
-			\item Наличие кода в вопросах и ответах
+			\item Наличие сниппетов кода в вопросах и ответах
     	\end{itemize}
     \end{column}
     \begin{column}{0.6\textwidth}
@@ -142,7 +142,7 @@
 
 \vskip0.5cm
 
-Хотим научиться определять правильные ответы, используя базу вопросов StackOverflow.
+Хотим научиться определять правильные ответы, используя базу вопросов StackOverflow
 
 \end{frame}
 
@@ -153,20 +153,19 @@
 \framesubtitle{Google \& StackOverflow}
 
 \begin{figure}
-	\begin{subfigure}[b]{.49\linewidth}
+	\begin{subfigure}[b]{0.49\linewidth}
 		\centering
 		\includegraphics[width=\linewidth]{images/google_search_old.png}
 		\caption{Old version}
 	\end{subfigure}\hfill
-	\begin{subfigure}[b]{.49\linewidth}
+	\begin{subfigure}[b]{0.49\linewidth}
 		\centering
 		\includegraphics[width=\linewidth]{images/google_search_new.png}
 		\caption{New version}
-	\end{subfigure}%
+	\end{subfigure}
 \end{figure}
 
 \end{frame}
-
 
 %-------------------------------------------------------------------------------
 
@@ -174,9 +173,332 @@
 \frametitle{Введение}
 \framesubtitle{Обзор имеющихся решений}
 
+"Towards Predicting the Best Answers in CB QAS" (Tian et al. 2013)
 \begin{itemize}
-	\item -
+	\item Три вида фичей: $A \leftrightarrow A$, $A \leftrightarrow Q$, $A$
+	\item Использование Vector Space Model + TF-IDF для определения похожести
+	\item Использование лингвистических фичей (длина текста, количество предложений, читаемость и др.)
+	\item Учитывается лишь наличие/отсутствие сниппетов кода
+	\item Random Forest Classifier
 \end{itemize}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Введение}
+\framesubtitle{Обзор имеющихся решений}
+
+"State of the art Best Answer Prediction based on Discretisation of Shallow Linguistic Features" (Gkotsis et al. 2014), 
+
+"Moving to Stack Overflow: Best-Answer Prediction in Legacy Developer Forums" (Calefato et al. 2016)
+\begin{itemize}
+	\item Четыре вида фичей: $A \leftrightarrow A$, $A$, $user$-$rating$ и $answer$-$rating$, $thread$
+	\item Использование лингвистических фичей (длина текста, количество предложений, читаемость и др.)
+	\item Использование вероятностной униграмной модели для оценки вероятности ответа
+	\item Использование группировки ответов и дискретизации фичей
+	\item Не учитывает сниппеты кода
+	\item Alternating Decision Tree Classifier
+\end{itemize}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Введение}
+\framesubtitle{Минусы имеющихся решений}
+
+\begin{itemize}
+	\item Не используется текст вопроса
+	\item Не учитываются синонимы и похожие слова, то есть игнорируется семантика
+	\item Не используется содержание сниппетов кода
+\end{itemize}
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Цели и задачи}
+%\framesubtitle{}
+
+Цель: научиться определять правильность ответа на StackOverflow, используя как его текст, так и код, который может присутствовать внутри ответа
+
+\medskip
+
+Задачи:
+\begin{itemize}
+	\item Реализовать классификатор на основе рекуррентных нейронных сетей, использующий текст ответов
+	\item Добавить извлечение фичей из кусков кода и использовать их в классификаторе 
+	\item Сравнить результаты с имеющимися работами
+	\item Проанализировать влияние наличия фичей от сниппетов кода на точность классификации
+\end{itemize}
+
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Данные}
+\framesubtitle{Общие факты}
+
+Данные:
+
+\begin{itemize}
+	\item Дамп базы вопросов StackOverflow
+	\item \texttt{XML}-файл размером $\sim50GB$
+	\item Формат файла: $type\_id$, $id$, $score$, $date$, $body$
+\end{itemize}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Данные}
+\framesubtitle{Анализ и обработка}
+
+Анализ:
+\begin{itemize}
+	\item $40$ миллионов постов, из них $16$ миллионов вопросов и $24$ миллионов ответов
+	\item $7$ миллионов вопросов $(47\%)$ без отмеченного правильного ответа
+	\item $2$ миллиона вопросов $(13\%)$, у которых нет ни одного ответа
+\end{itemize}
+
+Обработка:
+\begin{itemize}
+	\item Удаляем вопросы с рейтингом $\leqslant 0$, а также вопросы, у которых нет ни одного ответа
+	\item Из остальных постов извлекаем его $body$
+	\item Сохраняем весь код, находящийся в тегах \textless $code$ \textgreater
+	\item Очищаем от тегов и сохраняем весь остальной текст вопроса/ответа
+\end{itemize}
+
+После обработки получили $6.5$ миллионов вопросов, из них $2$ миллиона вопросов $(31\%)$ без правильного ответа, а также $13.5$ миллионов ответов
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Подходы к анализу текста}
+\framesubtitle{Bag of words}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+    	Идея:
+    	\begin{itemize}
+        	\item Каждому слову сопоставляем вектор длины, равной размеру словаря
+        	\item Документ: сумма векторов слов
+        \end{itemize}
+    	Проблемы:
+    	\begin{itemize}
+        	\item Не учитывается семантика
+        	\item Не учитывается порядок слов
+        	\item Большая размерность
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{center}
+            \includegraphics[width=1\textwidth]{images/bag_of_words.jpg} 
+        \end{center}
+    \end{column}
+\end{columns}
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Подходы к анализу текста}
+\framesubtitle{Word2Vec}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+    	Идея:
+    	\begin{itemize}
+        	\item Каждому слову сопоставляем вектор фиксированной длины
+        	\item Хотим, чтобы вектор отражал смысл слова
+        	\item Обучаем на неразмеченном корпусе текстов CBOW/Skip-gram модель        
+        \end{itemize}
+
+        Чтобы учесть специфику технического языка, обучаться лучше на текстах StackOverflow
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{images/cbow.png} 
+        \end{center}
+    \end{column}
+\end{columns}
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Подходы к анализу текста}
+\framesubtitle{Рекуррентные нейронные сети}
+
+Хотим научиться учитывать порядок слов в тексте
+    	
+Идея:
+\begin{itemize}
+	\item Используем embedding слов из Word2Vec
+	\item Отдаем на вход клетке сети новое слово и выход с предыдущей (учет контекста)
+	\item Хотим, чтобы выход сети отражал смысл входного текста
+\end{itemize}
+
+Также используются двунаправленные рекуррентные нейронные сети для захвата контекста справа
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{images/rnn.png}
+\end{center}
+
+\end{frame}
+
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Подходы к анализу текста}
+\framesubtitle{LSTM}
+
+Проблема долговременных зависимостей
+    	
+Идея:
+\begin{itemize}
+	\item Вводится состояние клетки
+	\item На каждом шаге забываем какую-то часть информации из состояния и добавляем новую
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/lstm.png}
+\end{center}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Классификация текстов}
+\framesubtitle{Базовая архитектура}
+
+\begin{itemize}
+	\item Классификация ответов на два класса: правильный/неправильный
+	\item В качестве embedding-а используется векторное представление, обученное на текстах вопросов и ответов StackOverflow
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{images/bilstm_text_classification.jpg}
+\end{center}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Классификация ответов}
+\framesubtitle{Учет текста вопроса}
+
+-
+
+\begin{center}
+%\includegraphics[width=0.6\textwidth]{images/bilstm_text_classification.jpg}
+\end{center}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Подходы к анализу кода}
+\framesubtitle{Проблемы}
+
+Код похож на текст, поэтому можно попробовать применить аналогичные методы
+
+Проблема: нелинейная структура кода (циклы, ветвления и др.)
+
+\medskip
+
+\footnotesize{Замечание: тем не менее, может хорошо сработать для однострочных сниппетов}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Подходы к анализу кода}
+\framesubtitle{Использование синтаксического дерева}
+
+\begin{columns}
+    \begin{column}{0.6\textwidth}
+		Идея:
+        \begin{itemize}
+			\item Вместо текста кода рассмотрим его синтаксическое дерево
+			\item Обучаем Code2Vec, используя в качестве контекста сыновей в синтаксическом дереве, нормализованных по размеру их поддерева
+		\end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{images/ast.png} 
+        \end{center}
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Подходы к анализу кода}
+\framesubtitle{Использование метода}
+
+\begin{itemize}
+	\item Обучаем модель на корпусе кода фиксированного языка программирования (например, \texttt{Python})
+	\item В качестве embedding-ов вершин синтаксического дерева используем полученные векторные представления 
+	\item Используем RNN, как в случае текста, отдавая на вход полученные embedding-и в порядке обхода $dfs$-ом
+\end{itemize}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Выводы}
+\framesubtitle{Результаты}
+
+\begin{itemize}
+	\item *сравнение с имеющимися решениями*
+	\item Анализ влияния наличия фичей от текста вопроса: как улучшилась классификация после добавления учета семантической похожести вопроса и ответа?
+	\item Анализ влияния наличия фичей от сниппетов кода: как улучшилась классификация после добавления учета содержания сниппетов кода?
+\end{itemize}
+
+\end{frame}
+
+%-------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Ссылки}
+\framesubtitle{Статьи}
+
+\begin{enumerate}
+    \item \begin{thebibliography}{99}
+            \bibitem[Tian, 2013]{p1} Tian et al. (2013)
+            \newblock \href{http://www.public.asu.edu/~bli24/Papers/ICWSM2013.pdf}{Towards Predicting the Best Answers in Community-Based Question-Answering Services}
+        \end{thebibliography}
+    \item \begin{thebibliography}{99}
+            \bibitem[Gkotsis, 2014]{p1} Gkotsis et al. (2014)
+            \newblock \href{https://dl.acm.org/citation.cfm?id=2615569.2615681}{It’s all in the Content: State of the art Best Answer Prediction based on Discretisation of Shallow Linguistic Features}
+        \end{thebibliography}
+    \item \begin{thebibliography}{99}
+            \bibitem[Calefato, 2016]{p1} Calefato et al. (2016)
+            \newblock \href{https://dl.acm.org/citation.cfm?id=2962585}{Moving to Stack Overflow: Best-Answer Prediction in Legacy Developer Forums}
+        \end{thebibliography}
+    \item \begin{thebibliography}{99}
+            \bibitem[Mou, 2014]{p1} Mou et al. (2014)
+            \newblock \href{https://arxiv.org/abs/1409.3358}{Building Program Vector Representations for Deep Learning}
+        \end{thebibliography}
+\end{enumerate}
 
 \end{frame}
 
