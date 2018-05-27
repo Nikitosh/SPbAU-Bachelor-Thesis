@@ -40,6 +40,7 @@
 \usepackage[subrefformat=parens]{subcaption}
 \captionsetup{compatibility=false}
 \captionsetup[subfigure]{labelformat=empty}
+\captionsetup[figure]{labelformat=empty}
 
 \usepackage{polyglossia}
 \setdefaultlanguage{russian}
@@ -69,7 +70,7 @@
 \texorpdfstring{\vskip0.5cm \footnotesize{Научный руководитель: Рауф Курбанов}}{}
 }
 \institute[СПбАУ]{Санкт-Петербургский Академический университет}
-\date{18 мая 2018 года}
+\date{18 июня 2018 года}
 \begin{document}
 
 %-------------------------------------------------------------------------------
@@ -174,11 +175,20 @@
 \framesubtitle{Обзор имеющихся решений}
 
 \begin{itemize}
-	\item Burel et al., 2012 \cite{Burel}
+	\setlength{\itemsep}{1em}
 
-	\item Tian et al., 2013 \cite{Tian}
+	\item Burel et al. (2012)
+	
+	"Automatic Identification of Best Answers in Online Enquiry Communities" 
 
-	\item Gkotsis et al., 2014 \cite{Gkotsis}
+	\item Tian et al. (2013) 
+	
+	"Towards Predicting the Best Answers in Community-Based Question-Answering Services" 
+
+	\item Gkotsis et al. (2014)
+	
+	"It’s all in the Content: State of the art Best Answer Prediction based on Discretisation of Shallow Linguistic Features"
+
 \end{itemize}
 
 \end{frame}
@@ -209,6 +219,7 @@
 \framesubtitle{Минусы имеющихся решений}
 
 \begin{itemize}
+	\setlength{\itemsep}{1em}
 	\item Не используется текст вопроса
 	\item Не учитывается контекст слова в предложении
 	\item Игнорируется семантика
@@ -222,7 +233,7 @@
 \begin{frame}
 \frametitle{Цели и задачи}
 
-Цель: Определять правильность ответа на StackOverflow, используя тексты вопроса и ответов.
+Цель: Научиться определять правильность ответа на StackOverflow, используя тексты вопроса и ответов
 
 \medskip
 
@@ -282,7 +293,7 @@
 
 \begin{itemize}
 	\item Векторные представления вопроса и ответа
-	\item Лингвистические: количество ссылок, параграфов, сниппетов кода, длина текста, различные индексы удобочитаемости
+	\item Лингвистические: количество ссылок, параграфов, сниппетов кода, длина текста, средняя длина предложения, различные индексы удобочитаемости
 	\item $thread$: позиция ответа, относительная позиция ответа
 \end{itemize}
 
@@ -316,7 +327,10 @@
 	\end{column}
     \begin{column}{0.5\textwidth}
         \begin{center}
-            \includegraphics[width=0.9\textwidth]{images/cbow.png} 
+        	\begin{figure}
+	            \includegraphics[width=0.9\textwidth]{images/cbow.png} 
+    	        \caption{Архитектура CBOW}
+        	\end{figure}
         \end{center}
     \end{column}
 \end{columns}
@@ -359,13 +373,13 @@
     \begin{tabularx}{\textwidth}{| l | X | l | l | l | l | l |}
     %\tiny
     \hline
-    Модель & Виды признаков & Acc & P & R & F1 & AUC \\ \hline
+    \textbf{Модель} & \textbf{Виды признаков} & \textbf{Acc} & \textbf{P} & \textbf{R} & \textbf{F1} & \textbf{AUC} \\ \hline
     First-answer & $thread$ & 0.66 & 0.68 & 0.68 & 0.68 & 0.71 \\ \hline
     Naive-Bayes with TF-IDF & текстовые & 0.6 & 0.59 & 0.61 & 0.6 &0.6 \\ \hline
     \hline
-    Burel et al. (2012) \cite{Burel} & лингвистические, словарные, $user$, $thread$, метаинформация & - & 0.77 & 0.77 & 0.76 & 0.83 \\ \hline
-    Tian et al. (2013) \cite{Tian} & лингвистические, $thread$, метаинформация & 0.72 & - & - & - & - \\ \hline
-    Gkotsis et al. (2014) \cite{Gkotsis} & лингвистические, словарные, $thread$, метаинформация & - & 0.83 & 0.66 & 0.74 & 0.85 \\ \hline
+    Burel et al. (2012) & лингвистические, словарные, $user$, $thread$, метаинформация & - & 0.77 & 0.77 & 0.76 & 0.83 \\ \hline
+    Tian et al. (2013) & лингвистические, $thread$, метаинформация & 0.72 & - & - & - & - \\ \hline
+    Gkotsis et al. (2014) & лингвистические, словарные, $thread$, метаинформация & - & 0.83 & 0.66 & 0.74 & 0.85 \\ \hline
     \hline
     CNN & лингвистические, $thread$, текстовые & \textbf{0.77} & 0.81 & 0.62 & 0.71 & \textbf{0.86} \\ \hline
     RNN & лингвистические, $thread$, текстовые & \textbf{0.78} & 0.82 & 0.64 & 0.72 & \textbf{0.87} \\ \hline
@@ -381,39 +395,9 @@
 
 \begin{itemize}
 	\item Реализовано несколько различных архитектур нейронных сетей для решения задачи определения наилучшего ответа на StackOverflow
-	\item Полученные результаты свидетельствуют о том, что нейронные сети справляются с задачей лучше методов, использованных в других статьях
 	\item Показано, что текст вопроса является важным признаком для классификации
+	\item Полученные результаты свидетельствуют о том, что нейронные сети справляются с задачей лучше методов, использованных в других статьях
 \end{itemize}
-
-\end{frame}
-
-%-------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Ссылки}
-\framesubtitle{Статьи}
-
-\begin{enumerate}
-    \item 
-    	\begin{thebibliography}{99}
-            \bibitem[1]{Burel} Burel et al. (2012)
-            \newblock \href{https://dl.acm.org/citation.cfm?id=2345733}{Automatic Identification of Best Answers in Online Enquiry Communities}
-        \end{thebibliography}
-    \item 
-    	\begin{thebibliography}{99}
-            \bibitem[2]{Tian} Tian et al. (2013)
-            \newblock \href{http://www.public.asu.edu/~bli24/Papers/ICWSM2013.pdf}{Towards Predicting the Best Answers in Community-Based Question-Answering Services}
-        \end{thebibliography}
-    \item 
-    	\begin{thebibliography}{99}
-            \bibitem[3]{Gkotsis} Gkotsis et al. (2014)
-            \newblock \href{https://dl.acm.org/citation.cfm?id=2615569.2615681}{It’s all in the Content: State of the art Best Answer Prediction based on Discretisation of Shallow Linguistic Features}
-        \end{thebibliography}
-    \item 
-    	\begin{thebibliography}{99}
-            \bibitem[4]{Calefato} Calefato et al. (2016)
-            \newblock \href{https://dl.acm.org/citation.cfm?id=2962585}{Moving to Stack Overflow: Best-Answer Prediction in Legacy Developer Forums}
-        \end{thebibliography}
-\end{enumerate}
 
 \end{frame}
 
