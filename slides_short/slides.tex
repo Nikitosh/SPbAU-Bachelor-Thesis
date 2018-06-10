@@ -231,7 +231,7 @@
 %-------------------------------------------------------------------------------
 
 \begin{frame}
-\frametitle{Цели и задачи}
+\frametitle{Цель и задачи}
 
 Цель: Научиться определять правильность ответа на StackOverflow, используя тексты вопроса и ответов
 
@@ -239,6 +239,7 @@
 
 Задачи:
 \begin{itemize}
+	\item Произвести сбор данных для обучения и тестирования
 	\item Реализовать несколько моделей классификаторов на основе нейронных сетей, использующих тексты ответов
 	\item Улучшить точность классификации за счет текста вопроса
 	\item Сравнить результаты с имеющимися работами
@@ -273,7 +274,7 @@
 Анализ:
 
 \begin{itemize}
-	\item $684$ тысячи постов, из них $257$ тысяч вопросов и $247$ тысяч ответов
+	\item $684$ тысячи постов, из них $257$ тысяч вопросов и $427$ тысяч ответов
 	\item $130$ тысяч вопросов $(51\%)$ без отмеченного правильного ответа
 	\item $28$ тысяч вопросов $(11\%)$, у которых нет ни одного ответа
 	\item Большое количество технических терминов и слов с опечатками
@@ -329,7 +330,7 @@
         \begin{center}
         	\begin{figure}
 	            \includegraphics[width=0.9\textwidth]{images/cbow.png} 
-    	        \caption{Архитектура CBOW}
+    	        \caption{Архитектура модели CBOW}
         	\end{figure}
         \end{center}
     \end{column}
@@ -341,11 +342,11 @@
 
 \begin{frame}
 \frametitle{Решение задачи}
-\framesubtitle{CNN}
+\framesubtitle{Сверточная нейронная сеть}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\linewidth]{images/cnn.png}
+	\includegraphics[width=0.7\linewidth]{images/my_cnn.png}
 \end{figure}
 
 \end{frame}
@@ -354,11 +355,11 @@
 
 \begin{frame}
 \frametitle{Решение задачи}
-\framesubtitle{RNN}
+\framesubtitle{Рекуррентная нейронная сеть}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.5\linewidth]{images/rnn.png}
+	\includegraphics[width=0.5\linewidth]{images/my_rnn.png}
 \end{figure}
 
 \end{frame}
@@ -371,19 +372,18 @@
 \begin{center}
 	\small
     \begin{tabularx}{\textwidth}{| l | X | l | l | l | l | l |}
-    %\tiny
-    \hline
-    \textbf{Модель} & \textbf{Виды признаков} & \textbf{Acc} & \textbf{P} & \textbf{R} & \textbf{F1} & \textbf{AUC} \\ \hline
-    First-answer & $thread$ & 0.66 & 0.68 & 0.68 & 0.68 & 0.71 \\ \hline
-    Naive-Bayes with TF-IDF & текстовые & 0.6 & 0.59 & 0.61 & 0.6 &0.6 \\ \hline
-    \hline
-    Burel et al. (2012) & лингвистические, словарные, $user$, $thread$, метаинформация & - & 0.77 & 0.77 & 0.76 & 0.83 \\ \hline
-    Tian et al. (2013) & лингвистические, $thread$, метаинформация & 0.72 & - & - & - & - \\ \hline
-    Gkotsis et al. (2014) & лингвистические, словарные, $thread$, метаинформация & - & 0.83 & 0.66 & 0.74 & 0.85 \\ \hline
-    \hline
-    CNN & лингвистические, $thread$, текстовые & \textbf{0.77} & 0.81 & 0.62 & 0.71 & \textbf{0.86} \\ \hline
-    RNN & лингвистические, $thread$, текстовые & \textbf{0.78} & 0.82 & 0.64 & 0.72 & \textbf{0.87} \\ \hline
-    RNN with HAtt & лингвистические, $thread$, текстовые & ? & ? & ? & ? & ? \\ \hline
+        \hline
+	    \textbf{Модель} & \textbf{Виды признаков} & $\mathbf{Acc}$ & $\mathbf{P}$ & $\mathbf{R}$ & $\mathbf{F_1}$ & $\mathbf{AUC}$ \\ \hline
+        \hline
+	    First-answer & метаинформация & 0.66 & 0.69 & 0.60 & 0.64 & 0.66 \\ \hline
+    	Naive-Bayes with TF-IDF & словарные & 0.6 & 0.58 & 0.54 & 0.56 & 0.59 \\ \hline
+        \hline
+	    Burel et al. (2012) & лингвистические, словарные, пользовательские, метаинформация & - & 0.77 & 0.77 & 0.76 & 0.83 \\ \hline
+    	Tian et al. (2013) & лингвистические, метаинформация & 0.72 & - & - & - & - \\ \hline
+        Gkotsis et al. (2014) & лингвистические, словарные, метаинформация & - & 0.83 & 0.66 & 0.74 & 0.85 \\ \hline
+	    \hline
+        CNN & лингвистические, текстовые, метаинформация & \textbf{0.77} & 0.81 & 0.62 & 0.71 & \textbf{0.86} \\ \hline
+	    RNN & лингвистические, текстовые, метаинформация & \textbf{0.78} & 0.82 & 0.64 & 0.72 & \textbf{0.87} \\ \hline
     \end{tabularx}
 \end{center}
 \end{frame}
@@ -394,6 +394,7 @@
 \frametitle{Выводы}
 
 \begin{itemize}
+	\item Подготовлен корпус данных, представляющий из себя ответы на вопросы с сайта Server Fault
 	\item Реализовано несколько различных архитектур нейронных сетей для решения задачи определения наилучшего ответа на StackOverflow
 	\item Показано, что текст вопроса является важным признаком для классификации
 	\item Полученные результаты свидетельствуют о том, что нейронные сети справляются с задачей лучше методов, использованных в других статьях
