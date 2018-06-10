@@ -1,9 +1,12 @@
-% В этом шаблоне используется класс spbau-diploma. Его можно найти и, если требуется,n
+% В этом шаблоне используется класс spbau-diploma. Его можно найти и, если требуется,
 % поправить в файле spbau-diploma.cls
 \documentclass{spbau-diploma}
 \usepackage{wasysym}
 \usepackage{subfiles}
 \usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{subcaption}
 
 % \usepackage[utf8]{inputenc}
 % \usepackage[english]{babel}
@@ -27,7 +30,7 @@
 % Если англоязычная титульная страница не нужна, то ее можно просто удалить.
 \filltitle{ru}{
     chair              = {Кафедра математических и информационных технологий},
-    title              = {Определение правильного ответа на StackOverflow},
+    title              = {Определение наилучшего ответа на StackOverflow},
     % Здесь указывается тип работы. Возможные значения:
     %   coursework - Курсовая работа
     %   diploma - Диплом специалиста
@@ -40,7 +43,7 @@
     supervisorPosition = {},
     supervisor         = {Курбанов Р. Э.},
     reviewerPosition   = {},
-    reviewer           = {-},
+    reviewer           = {Артамонов А. С.},
     chairHeadPosition  = {д.\,ф.-м.\,н., профессор},
     chairHead          = {Омельченко А.\,В.},
     % university       = {САНКТ-ПЕТЕРБУРГСКИЙ АКАДЕМИЧЕСКИЙ УНИВЕРСИТЕТ},
@@ -50,12 +53,12 @@
 }
 \filltitle{en}{
     chair              = {Department of Mathematics and Information Technology},
-    title              = {Correct answer detection on StackOverflow},
+    title              = {Best answer detection on StackOverflow},
     author             = {Nikita Podguzov},
     supervisorPosition = {},
     supervisor         = {Rauf Kurbanov},
     reviewerPosition   = {},
-    reviewer           = {-},
+    reviewer           = {Alexey Artamonov},
     chairHeadPosition  = {professor},
     chairHead          = {Alexander Omelchenko},
 }
@@ -63,37 +66,26 @@
 \tableofcontents
 
 \section*{Введение}
-\subfile{sections/introduction}
+\subfile{sections/0_introduction}
 
-\subsection*{Кратко о последующих главах}
-\label{sec:next_chapters}
-\subfile{sections/next_chapters}
+\section{Обзор предметной области}
+\subfile{sections/1_subject_area}
 
-\section{Обзор решений}
-\label{sec:existing_solutions}
-\subfile{sections/existing_solutions}
-
-\section{Цели и задачи}
-\label{sec:goals}
-\subfile{sections/goals}
+\section{Цель и задачи}
+\subfile{sections/2_goals}
 
 \section{Описание данных}
-\label{sec:data}
-\subfile{sections/data}
+\subfile{sections/3_data}
 
 \section{Методы и реализация}
-\label{sec:methods}
-\subfile{sections/methods}
-\label{sec:implementation}
-\subfile{sections/implementation}
+\subfile{sections/4_methods_and_implementation}
 
-\section{Обсуждение результатов}
-\label{sec:experiments}
-\subfile{sections/experiments}
+\clearpage
+\section{Тестирование}
+\subfile{sections/5_experiments}
 
-\section{Заключение}
-\label{sec:conclusion}
-\subfile{sections/conclusion}
+\section*{Заключение}
+\subfile{sections/6_conclusion}
 
 \bibliographystyle{ugost2008ls}
 \bibliography{diploma}
