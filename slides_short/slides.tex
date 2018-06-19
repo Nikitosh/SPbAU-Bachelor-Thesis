@@ -122,7 +122,7 @@
     \end{column}
     \begin{column}{0.6\textwidth}
         \begin{center}
-            \includegraphics[width=0.8\textwidth]{images/serverfault_screen.png}
+            \includegraphics[width=0.82\textwidth]{images/serverfault_screen.png}
         \end{center}
     \end{column}
 \end{columns}
@@ -137,7 +137,7 @@
 
 Проблемы:
 \begin{itemize}
-	\item Большая доля "неразрешенных" вопросов
+	\item Большая доля <<неразрешенных>> вопросов
 	\item Нет возможности помочь оценить правильность ответов пользователю, задавшему новый вопрос
 \end{itemize}
 
@@ -179,15 +179,15 @@
 
 	\item Burel et al. (2012)
 	
-	"Automatic Identification of Best Answers in Online Enquiry Communities" 
+	<<Automatic Identification of Best Answers in Online Enquiry Communities>> 
 
 	\item Tian et al. (2013) 
 	
-	"Towards Predicting the Best Answers in Community-Based Question-Answering Services" 
+	<<Towards Predicting the Best Answers in Community-Based Question-Answering Services>> 
 
 	\item Gkotsis et al. (2014)
 	
-	"It’s all in the Content: State of the art Best Answer Prediction based on Discretisation of Shallow Linguistic Features"
+	<<It’s all in the Content: State of the art Best Answer Prediction based on Discretisation of Shallow Linguistic Features>>
 
 \end{itemize}
 
@@ -221,8 +221,8 @@
 \begin{itemize}
 	\setlength{\itemsep}{1em}
 	\item Не используется текст вопроса
-	\item Не учитывается контекст слова в предложении
-	\item Игнорируется семантика
+	\item Не учитывается порядок слов в предложении и их контекст
+	\item Игнорируются семантические свойства слов
 \end{itemize}
 
 \end{frame}
@@ -233,15 +233,14 @@
 \begin{frame}
 \frametitle{Цель и задачи}
 
-Цель: Научиться определять правильность ответа на StackOverflow, используя тексты вопроса и ответов
+Цель: Научиться определять правильность ответа на StackOverflow, используя тексты вопросов и ответов
 
 \medskip
 
 Задачи:
 \begin{itemize}
 	\item Произвести сбор данных для обучения и тестирования
-	\item Реализовать несколько моделей классификаторов на основе нейронных сетей, использующих тексты ответов
-	\item Улучшить точность классификации за счет текста вопроса
+	\item Разработать несколько моделей классификаторов на основе нейронных сетей, использующих содержания вопроса и ответа
 	\item Сравнить результаты с имеющимися работами
 \end{itemize}
 
@@ -294,8 +293,9 @@
 
 \begin{itemize}
 	\item Векторные представления вопроса и ответа
-	\item Лингвистические: количество ссылок, параграфов, сниппетов кода, длина текста, средняя длина предложения, различные индексы удобочитаемости
-	\item $thread$: позиция ответа, относительная позиция ответа
+	\item Лингвистические: количество ссылок, параграфов, фрагментов кода, длина текста, средняя длина предложения, различные индексы удобочитаемости
+	\item Словарные: различные модификации коэффициента Жаккара для текстов вопроса и ответа
+	\item Метаинформация: дата публикации и позиция ответа
 \end{itemize}
 
 \end{frame}
@@ -346,7 +346,7 @@
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.7\linewidth]{images/my_cnn.png}
+	\includegraphics[width=0.75\linewidth]{images/my_cnn.png}
 \end{figure}
 
 \end{frame}
@@ -359,7 +359,7 @@
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.5\linewidth]{images/my_rnn.png}
+	\includegraphics[width=0.53\linewidth]{images/my_rnn.png}
 \end{figure}
 
 \end{frame}
@@ -378,12 +378,12 @@
 	    First-answer & метаинформация & 0.66 & 0.69 & 0.60 & 0.64 & 0.66 \\ \hline
     	Naive-Bayes with TF-IDF & словарные & 0.6 & 0.58 & 0.54 & 0.56 & 0.59 \\ \hline
         \hline
-	    Burel et al. (2012) & лингвистические, словарные, пользовательские, метаинформация & - & 0.77 & 0.77 & 0.76 & 0.83 \\ \hline
+	    Burel et al. (2012) & лингвистические, словарные, метаинформация & - & 0.77 & 0.77 & 0.76 & 0.83 \\ \hline
     	Tian et al. (2013) & лингвистические, метаинформация & 0.72 & - & - & - & - \\ \hline
         Gkotsis et al. (2014) & лингвистические, словарные, метаинформация & - & 0.83 & 0.66 & 0.74 & 0.85 \\ \hline
 	    \hline
-        CNN & лингвистические, текстовые, метаинформация & \textbf{0.77} & 0.81 & 0.62 & 0.71 & \textbf{0.86} \\ \hline
-	    RNN & лингвистические, текстовые, метаинформация & \textbf{0.78} & 0.82 & 0.64 & 0.72 & \textbf{0.87} \\ \hline
+        CNN & текстовые, лингвистические, словарные, метаинформация & \textbf{0.77} & 0.84 & 0.61 & 0.71 & \textbf{0.86} \\ \hline
+	    RNN & текстовые, лингвистические, словарные, метаинформация & \textbf{0.79} & 0.87 & 0.62 & 0.73 & \textbf{0.88} \\ \hline
     \end{tabularx}
 \end{center}
 \end{frame}
@@ -395,7 +395,7 @@
 
 \begin{itemize}
 	\item Подготовлен корпус данных, представляющий из себя ответы на вопросы с сайта Server Fault
-	\item Реализовано несколько различных архитектур нейронных сетей для решения задачи определения наилучшего ответа на StackOverflow
+	\item Разработано и реализовано несколько различных архитектур нейронных сетей для решения задачи определения наилучшего ответа на StackOverflow
 	\item Показано, что текст вопроса является важным признаком для классификации
 	\item Полученные результаты свидетельствуют о том, что нейронные сети справляются с задачей лучше методов, использованных в других статьях
 \end{itemize}
